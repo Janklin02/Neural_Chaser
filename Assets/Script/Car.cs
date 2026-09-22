@@ -122,4 +122,17 @@ public class Car : MonoBehaviour
         rb.angularVelocity = turnel * -1;
         Debug.Log(Steer);
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            Debug.Log("Hit Wall");
+            Respawn();
+        }
+    }
+
+    public void Respawn()
+    {
+
+    }
 }
