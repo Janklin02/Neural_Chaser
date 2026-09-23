@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 3
   tags:
   - Car
+  - Wall
+  - FinishLine
   layers:
   - Default
   - TransparentFX
@@ -42,6 +44,14 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Track
+    uniqueID: 2059109815
+    locked: 0
+  - name: Car
+    uniqueID: 502006421
+    locked: 0
   m_RenderingLayers:
   - Default
+  - Track
+  - Cars
   m_MigratedRenderPipelines: []

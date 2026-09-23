@@ -18,12 +18,14 @@ public class Car : MonoBehaviour
     private int tCount;
     public int bCountO;
     private int bCount;
+    public GameObject RespawnPoint;
     [SerializeField] Rigidbody2D rb;
 
     // Start is called before the first frame update
     void Start()
     {
         Debug.Log("Play Started");
+        Respawn();
     }
 
     // Update is called once per frame
@@ -133,6 +135,8 @@ public class Car : MonoBehaviour
 
     public void Respawn()
     {
-
+        transform.position = RespawnPoint.transform.position;
+        Speed = 0;
+        throttle = 0;
     }
 }
