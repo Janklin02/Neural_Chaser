@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class Car : MonoBehaviour
 {
@@ -10,7 +12,6 @@ public class Car : MonoBehaviour
     public float steeringStrength;
     public float steeringDamper;
     private float turnel;
-    private float turnar;
     private float throttle;
     private float minThrottle = 0;
     public float maxThrottle;
@@ -21,6 +22,8 @@ public class Car : MonoBehaviour
     public GameObject RespawnPoint;
     [SerializeField] Rigidbody2D rb;
     private int Laps;
+    public Slider ThrottleBar;
+    public TextMeshProUGUI LapCounter;
 
     // Start is called before the first frame update
     void Start()
@@ -71,6 +74,7 @@ public class Car : MonoBehaviour
         if (tCount == 0)
         {
             throttle += 0.1f;
+            ThrottleBar.value = throttle;
         }
         tCount++;
         if (tCount >= tCountO)
@@ -80,6 +84,7 @@ public class Car : MonoBehaviour
         if (throttle >= maxThrottle)
         {
             throttle = maxThrottle;
+            ThrottleBar.value = throttle;
         }
     }
     public void Brake()
@@ -87,6 +92,7 @@ public class Car : MonoBehaviour
         if (bCount == 0)
         {
             throttle -= breakPower;
+            ThrottleBar.value = throttle;
         }
         bCount++;
         if (bCount >= bCountO)
@@ -96,6 +102,7 @@ public class Car : MonoBehaviour
         if (throttle <= minThrottle)
         {
             throttle = minThrottle;
+            ThrottleBar.value = throttle;
         }
     }
     public void TurnL()
@@ -148,11 +155,16 @@ public class Car : MonoBehaviour
     public void Lap()
     {
         Laps++;
+        LapCounter.text = Laps.ToString();
     }
     public void Respawn()
     {
         transform.position = RespawnPoint.transform.position;
+        transform.rotation = RespawnPoint.transform.rotation;
         Speed = 0;
         throttle = 0;
+        Laps = 0;
+        ThrottleBar.value = throttle;
+        LapCounter.text = Laps.ToString();
     }
 }
