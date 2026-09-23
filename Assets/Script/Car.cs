@@ -20,12 +20,14 @@ public class Car : MonoBehaviour
     private int bCount;
     public GameObject RespawnPoint;
     [SerializeField] Rigidbody2D rb;
+    private int Laps;
 
     // Start is called before the first frame update
     void Start()
     {
         Debug.Log("Play Started");
         Respawn();
+        Laps = 0;
     }
 
     // Update is called once per frame
@@ -52,6 +54,7 @@ public class Car : MonoBehaviour
             Brake();
         }
         go();
+        Debug.Log(Laps);
     }
 
     public void go()
@@ -105,7 +108,7 @@ public class Car : MonoBehaviour
             turnel = steeringStrength * 0.05f;
         }
             rb.angularVelocity = turnel;
-        Debug.Log(Steer);
+
     }
     public void StopTurn()
     {
@@ -122,7 +125,7 @@ public class Car : MonoBehaviour
             turnel = steeringStrength * 0.05f;
         }
         rb.angularVelocity = turnel * -1;
-        Debug.Log(Steer);
+
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -131,8 +134,21 @@ public class Car : MonoBehaviour
             Debug.Log("Hit Wall");
             Respawn();
         }
+
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("FinishLine"))
+        {
+            Debug.Log("LapComplete");
+            Lap();
+        }
     }
 
+    public void Lap()
+    {
+        Laps++;
+    }
     public void Respawn()
     {
         transform.position = RespawnPoint.transform.position;
