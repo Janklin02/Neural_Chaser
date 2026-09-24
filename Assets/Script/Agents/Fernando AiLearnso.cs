@@ -17,11 +17,6 @@ public class FernandoAiLearnso : Agent
     [SerializeField] private float _throttle;
     [SerializeField] private float _minThrottle = 0;
     [SerializeField] private float _maxThrottle = 1;
-    [SerializeField] public int tCountO;
-    [SerializeField] private int _tCount;
-    [SerializeField] public int bCountO;
-    [SerializeField] private int _bCount;
-    [SerializeField] public GameObject RespawnPoint;
     [SerializeField] Rigidbody2D rb;
     [SerializeField] private int _Laps;
     [SerializeField] public Slider ThrottleBar;
