@@ -1,13 +1,17 @@
 using Newtonsoft.Json.Bson;
+using NUnit.Framework;
+using System.Collections.Generic;
 using TMPro;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class FernandoAiLearnso : Agent
 {
+    [SerializeField] public float maxStep;
     [SerializeField] private Transform _goal;
     [SerializeField] private float _Speed;
     [SerializeField] public float topSpeed;
@@ -21,8 +25,9 @@ public class FernandoAiLearnso : Agent
     [SerializeField] private int _Laps;
     [SerializeField] public Slider ThrottleBar;
     [SerializeField] public TextMeshProUGUI LapCounter;
-    public GameObject[] StartPoints;
-
+    private Vector2 StartPos;
+    public List<GameObject> StartPoints;
+    private int Place;
     private Renderer _renderer;
 
     private int _currentEpisode = 0;
@@ -39,8 +44,7 @@ public class FernandoAiLearnso : Agent
         _renderer = GetComponent<Renderer>();
         _currentEpisode = 0;
         _cumulativeReward = 0f;
-
-        Respawn();
+        Invoke(nameof(SetStart), 0.5f);
     }
 
     public override void OnEpisodeBegin()
@@ -49,21 +53,28 @@ public class FernandoAiLearnso : Agent
 
         _currentEpisode++;
         _cumulativeReward = 0f;
-
-        Respawn();
+        Invoke(nameof(Respawn), 0.5f);
     }
-
+    private void SetStart()
+    {
+        StartPos = transform.position;
+    }
     private void Respawn()
     {
-        int randomIndex = Random.Range(0, StartPoints.Length);
-        GameObject chosenObject = StartPoints[randomIndex];
-        transform.position = chosenObject.transform.position;
-        transform.rotation = chosenObject.transform.rotation;
+        transform.position = StartPos;
+        transform.rotation = Quaternion.Euler(0f, 0f, 90f);
     }
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        //Placeholder: What Agent Sees Goes Here Later
+        float driverPositionX_Normalized = transform.position.x / 5f;
+        float driverPositionY_Normalized = transform.position.y / 5f;
+
+        float driverRotationY_Normalized = (transform.rotation.eulerAngles.y / 360f) * 2f - 1f;
+
+        sensor.AddObservation(driverPositionX_Normalized);
+        sensor.AddObservation(driverPositionY_Normalized);
+        sensor.AddObservation(driverRotationY_Normalized);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -71,6 +82,10 @@ public class FernandoAiLearnso : Agent
         ThrottleAgent(actions.DiscreteActions);
 
         TurnAgent (actions.DiscreteActions);
+
+        AddReward(-2f / maxStep);
+
+        _cumulativeReward = GetCumulativeReward();
     }
 
     public void ThrottleAgent(ActionSegment<int> act)
@@ -86,6 +101,8 @@ public class FernandoAiLearnso : Agent
             case 2:
                 _throttle =- 0.1f;
                 ThrottleCheck();
+                break;
+            case 3:
                 break;
         }
     }
@@ -113,10 +130,12 @@ public class FernandoAiLearnso : Agent
         if (_throttle > _maxThrottle)
         {
             _throttle = 1f;
+
         }
         if (_throttle < _minThrottle)
         {
             _throttle = 0f;
+            AddReward(-0.1f);
         }
     }
 
@@ -154,6 +173,36 @@ public class FernandoAiLearnso : Agent
         if (_Speed >= topSpeed)
         {
             _Speed = topSpeed;
+            AddReward(0.1f);
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("FinishLine"))
+        {
+            FinishedLap();
+        }
+
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            Respawn();
+            AddReward(-2f);
+        }
+    }
+
+    private void FinishedLap()
+    {
+        AddReward(1.0f);
+        _cumulativeReward = GetCumulativeReward();
+
+        EndEpisode();
+    }
 }
+
+
+
