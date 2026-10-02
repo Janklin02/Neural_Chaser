@@ -13,6 +13,9 @@ public class FernandoAiLearnso : Agent
 {
     [SerializeField] public float maxStep;
     [SerializeField] private Transform _goal;
+    [SerializeField] private float Steer;
+    [SerializeField] private float SteerMax = 1;
+    [SerializeField] private float SteerMin = -1;
     [SerializeField] private float _Speed;
     [SerializeField] public float topSpeed;
     [SerializeField] public float steeringStrength;
@@ -25,10 +28,13 @@ public class FernandoAiLearnso : Agent
     [SerializeField] private int _Laps;
     [SerializeField] public Slider ThrottleBar;
     [SerializeField] public TextMeshProUGUI LapCounter;
+    public TextMeshProUGUI Reward;
     private Vector2 StartPos;
     public List<GameObject> StartPoints;
     private int Place;
     private Renderer _renderer;
+    public float ThrottleRewardThreshHold;
+    public float ThrottlePunishmentThreshHold;
 
     private int _currentEpisode = 0;
     private float _cumulativeReward = 0f;
@@ -84,8 +90,12 @@ public class FernandoAiLearnso : Agent
         TurnAgent (actions.DiscreteActions);
 
         AddReward(-2f / maxStep);
-
+        if (StepCount > maxStep)
+        {
+            Fail();
+        }
         _cumulativeReward = GetCumulativeReward();
+        Reward.text = _cumulativeReward.ToString();
     }
 
     public void ThrottleAgent(ActionSegment<int> act)
@@ -103,13 +113,16 @@ public class FernandoAiLearnso : Agent
                 ThrottleCheck();
                 break;
             case 3:
+                Debug.Log("Im Happy With How It Is");
+                break;
+            default:
                 break;
         }
     }
 
     public void TurnAgent(ActionSegment<int> act)
     {
-        var action = act[0];
+        var action = act[1];
 
         switch (action)
         {
@@ -120,13 +133,16 @@ public class FernandoAiLearnso : Agent
                 SteerRight();
                 break;
             case 3:
-                StopTurn();
+                Debug.Log("Im Happy With How It Is");
+                break;
+            default:
                 break;
         }
     }
 
     public void ThrottleCheck()
     {
+        ThrottleBar.value = _throttle;
         if (_throttle > _maxThrottle)
         {
             _throttle = 1f;
@@ -135,30 +151,33 @@ public class FernandoAiLearnso : Agent
         if (_throttle < _minThrottle)
         {
             _throttle = 0f;
-            AddReward(-0.1f);
+        }
+        if ( _throttle > ThrottleRewardThreshHold)
+        {
+            AddReward(1.5f / maxStep);
+        }
+        if ( _throttle < ThrottlePunishmentThreshHold)
+        {
+            AddReward(-1.5f / maxStep);
         }
     }
 
     public void SteerLeft()
     {
-        float Steer = steeringDamper - _throttle;
-        _turnel = steeringStrength * Steer;
-        if (Steer == 0)
+        Steer =- 0.25f;
+        if ( Steer < SteerMin)
         {
-            _turnel = steeringStrength * 0.05f;
+            Steer = SteerMin;
         }
-        rb.angularVelocity = _turnel;
     }
 
     public void SteerRight ()
     {
-        float Steer = steeringDamper - _throttle;
-        _turnel = steeringStrength * Steer;
-        if (Steer == 0)
+        Steer =+ 0.25f;
+        if ( Steer > SteerMax )
         {
-            _turnel = steeringStrength * 0.05f;
+            Steer = SteerMax;
         }
-        rb.angularVelocity = _turnel * -1;
     }
 
     public void StopTurn()
@@ -173,31 +192,50 @@ public class FernandoAiLearnso : Agent
         if (_Speed >= topSpeed)
         {
             _Speed = topSpeed;
-            AddReward(0.1f);
         }
+
+        float Value = (steeringDamper - _throttle) * Steer;
+        _turnel = steeringStrength * Value;
+        if (Value == 0)
+        {
+            _turnel = steeringStrength * 0.05f;
+        }
+        rb.angularVelocity = _turnel;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.gameObject.CompareTag("FinishLine"))
+        if (collision.gameObject.CompareTag("FinishLine"))
         {
             FinishedLap();
-        }
+            Debug.Log("LineCrossed!");
 
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            Respawn();
-            AddReward(-2f);
+            Fail();
         }
     }
 
     private void FinishedLap()
     {
-        AddReward(1.0f);
+        AddReward(5.0f);
+        Debug.Log(_cumulativeReward);
+        _cumulativeReward = GetCumulativeReward();
+        _Laps++;
+        LapCounter.text = _Laps.ToString();
+        Debug.Log(_cumulativeReward);
+
+        EndEpisode();
+    }
+
+    private void Fail()
+    {
+        AddReward(-1.0f);
         _cumulativeReward = GetCumulativeReward();
 
         EndEpisode();

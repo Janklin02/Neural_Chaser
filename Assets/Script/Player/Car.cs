@@ -24,6 +24,7 @@ public class Car : MonoBehaviour
     private int Laps;
     public Slider ThrottleBar;
     public TextMeshProUGUI LapCounter;
+    public bool TrainingMode;
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +32,10 @@ public class Car : MonoBehaviour
         Debug.Log("Play Started");
         Respawn();
         Laps = 0;
+        if (TrainingMode == true)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame
