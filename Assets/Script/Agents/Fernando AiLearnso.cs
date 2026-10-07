@@ -25,8 +25,9 @@ public class FernandoAiLearnso : Agent
     [SerializeField] private float _minThrottle = 0;
     [SerializeField] private float _maxThrottle = 1;
     [SerializeField] Rigidbody2D rb;
-    [SerializeField] private int _Laps;
-    [SerializeField] public Slider ThrottleBar;
+    private int _Laps;
+    public Slider ThrottleBar;
+    public Slider TurnBar;
     [SerializeField] public TextMeshProUGUI LapCounter;
     public TextMeshProUGUI Reward;
     private Vector2 StartPos;
@@ -35,7 +36,8 @@ public class FernandoAiLearnso : Agent
     private Renderer _renderer;
     public float ThrottleRewardThreshHold;
     public float ThrottlePunishmentThreshHold;
-
+    public CheckpointTracker[] CheckpointTracker;
+    private int Checkpoints;
     private int _currentEpisode = 0;
     private float _cumulativeReward = 0f;
 
@@ -60,6 +62,15 @@ public class FernandoAiLearnso : Agent
         _currentEpisode++;
         _cumulativeReward = 0f;
         Invoke(nameof(Respawn), 0.5f);
+
+        Steer = 0f;
+        _throttle = 0f;
+        _Speed = 0f;
+
+        for (int i = 0; i < CheckpointTracker.Length; i++)
+        {
+            CheckpointTracker[i].Restart();
+        }
     }
     private void SetStart()
     {
@@ -68,7 +79,7 @@ public class FernandoAiLearnso : Agent
     private void Respawn()
     {
         transform.position = StartPos;
-        transform.rotation = Quaternion.Euler(0f, 0f, 90f);
+        transform.rotation = Quaternion.Euler(0f, 0f, -90f);
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -80,7 +91,13 @@ public class FernandoAiLearnso : Agent
 
         sensor.AddObservation(driverPositionX_Normalized);
         sensor.AddObservation(driverPositionY_Normalized);
-        sensor.AddObservation(driverRotationY_Normalized);
+        sensor.AddObservation(_throttle);
+        sensor.AddObservation(_turnel);
+        sensor.AddObservation(_maxThrottle);
+        sensor.AddObservation(_minThrottle);
+        sensor.AddObservation(ThrottleRewardThreshHold);
+        sensor.AddObservation(ThrottlePunishmentThreshHold);
+        sensor.AddObservation(Time.timeScale);
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -105,21 +122,28 @@ public class FernandoAiLearnso : Agent
         switch (action)
         {
             case 1:
-                _throttle =+ 0.1f;
+                ThrottleUp();
                 ThrottleCheck();
                 break;
             case 2:
-                _throttle =- 0.1f;
+                ThrottleDown();
                 ThrottleCheck();
                 break;
             case 3:
-                Debug.Log("Im Happy With How It Is");
                 break;
             default:
                 break;
         }
     }
 
+    private void ThrottleUp()
+    {
+        _throttle += 0.1f;
+    }
+    private void ThrottleDown()
+    {
+        _throttle -= 0.1f;
+    }
     public void TurnAgent(ActionSegment<int> act)
     {
         var action = act[1];
@@ -133,7 +157,6 @@ public class FernandoAiLearnso : Agent
                 SteerRight();
                 break;
             case 3:
-                Debug.Log("Im Happy With How It Is");
                 break;
             default:
                 break;
@@ -152,37 +175,33 @@ public class FernandoAiLearnso : Agent
         {
             _throttle = 0f;
         }
-        if ( _throttle > ThrottleRewardThreshHold)
-        {
-            AddReward(1.5f / maxStep);
-        }
-        if ( _throttle < ThrottlePunishmentThreshHold)
-        {
-            AddReward(-1.5f / maxStep);
-        }
+
     }
 
     public void SteerLeft()
     {
-        Steer =- 0.25f;
+        Steer -= 0.25f;
         if ( Steer < SteerMin)
         {
             Steer = SteerMin;
         }
+        TurnBar.value = Steer;
     }
 
     public void SteerRight ()
     {
-        Steer =+ 0.25f;
+        Steer += 0.25f;
         if ( Steer > SteerMax )
         {
             Steer = SteerMax;
+            TurnBar.value = Steer;
         }
+        TurnBar.value = Steer;
     }
 
     public void StopTurn()
     {
-        rb.angularVelocity = 0;
+        Steer = 0;
     }
 
     public void go()
@@ -194,13 +213,18 @@ public class FernandoAiLearnso : Agent
             _Speed = topSpeed;
         }
 
-        float Value = (steeringDamper - _throttle) * Steer;
+        float Value = Steer * (steeringDamper - _throttle);
         _turnel = steeringStrength * Value;
-        if (Value == 0)
-        {
-            _turnel = steeringStrength * 0.05f;
-        }
         rb.angularVelocity = _turnel;
+
+        if (_throttle >= ThrottleRewardThreshHold)
+        {
+            AddReward(1.5f / maxStep);
+        }
+        if (_throttle <= ThrottlePunishmentThreshHold)
+        {
+            AddReward(-3f / maxStep);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -220,10 +244,18 @@ public class FernandoAiLearnso : Agent
             Fail();
         }
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Checkpoint"))
+        {
+            Checkpoints++;
+            AddReward(2.0f);
+        }
+    }
 
     private void FinishedLap()
     {
-        AddReward(5.0f);
+        AddReward(10.0f);
         Debug.Log(_cumulativeReward);
         _cumulativeReward = GetCumulativeReward();
         _Laps++;
@@ -235,7 +267,7 @@ public class FernandoAiLearnso : Agent
 
     private void Fail()
     {
-        AddReward(-1.0f);
+        AddReward(-5.0f);
         _cumulativeReward = GetCumulativeReward();
 
         EndEpisode();

@@ -1,7 +1,65 @@
 {
+    "Driver1": {
+        "checkpoints": [
+            {
+                "steps": 999954,
+                "file_path": "results\\FernandoAiLearnso1\\Driver1\\Driver1-999954.onnx",
+                "reward": -1.0542144835319207,
+                "creation_time": 1791040554.9591296,
+                "auxillary_file_paths": [
+                    "results\\FernandoAiLearnso1\\Driver1\\Driver1-999954.pt"
+                ]
+            },
+            {
+                "steps": 1235246,
+                "file_path": "results\\FernandoAiLearnso1\\Driver1\\Driver1-1235246.onnx",
+                "reward": -0.625221551341169,
+                "creation_time": 1791041448.0592227,
+                "auxillary_file_paths": [
+                    "results\\FernandoAiLearnso1\\Driver1\\Driver1-1235246.pt"
+                ]
+            },
+            {
+                "steps": 1946425,
+                "file_path": "results\\FernandoAiLearnso1\\Driver1\\Driver1-1946425.onnx",
+                "reward": -1.013895077733543,
+                "creation_time": 1791046354.1622403,
+                "auxillary_file_paths": [
+                    "results\\FernandoAiLearnso1\\Driver1\\Driver1-1946425.pt"
+                ]
+            },
+            {
+                "steps": 1946425,
+                "file_path": "results\\FernandoAiLearnso1\\Driver1\\Driver1-1946425.onnx",
+                "reward": null,
+                "creation_time": 1791048308.1503851,
+                "auxillary_file_paths": [
+                    "results\\FernandoAiLearnso1\\Driver1\\Driver1-1946425.pt"
+                ]
+            },
+            {
+                "steps": 1956670,
+                "file_path": "results\\FernandoAiLearnso1\\Driver1\\Driver1-1956670.onnx",
+                "reward": null,
+                "creation_time": 1791048411.4540164,
+                "auxillary_file_paths": [
+                    "results\\FernandoAiLearnso1\\Driver1\\Driver1-1956670.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 1956670,
+            "file_path": "results\\FernandoAiLearnso1\\Driver1.onnx",
+            "reward": null,
+            "creation_time": 1791048411.4540164,
+            "auxillary_file_paths": [
+                "results\\FernandoAiLearnso1\\Driver1\\Driver1-1956670.pt"
+            ]
+        }
+    },
     "metadata": {
         "stats_format_version": "0.3.0",
         "mlagents_version": "1.2.0.dev0",
-        "torch_version": "2.14.0+cpu"
+        "torch_version": "2.1.1+cpu"
     }
 }

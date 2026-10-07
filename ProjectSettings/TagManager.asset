@@ -9,6 +9,7 @@ TagManager:
   - FinishLine
   - AiLearnso
   - Aimilton
+  - Checkpoint
   layers:
   - Default
   - TransparentFX

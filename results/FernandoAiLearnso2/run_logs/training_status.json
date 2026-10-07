@@ -1,0 +1,29 @@
+{
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.1.1+cpu"
+    },
+    "Driver1": {
+        "checkpoints": [
+            {
+                "steps": 0,
+                "file_path": "results\\FernandoAiLearnso2\\Driver1\\Driver1-0.onnx",
+                "reward": null,
+                "creation_time": 1791045936.1597576,
+                "auxillary_file_paths": [
+                    "results\\FernandoAiLearnso2\\Driver1\\Driver1-0.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 0,
+            "file_path": "results\\FernandoAiLearnso2\\Driver1.onnx",
+            "reward": null,
+            "creation_time": 1791045936.1597576,
+            "auxillary_file_paths": [
+                "results\\FernandoAiLearnso2\\Driver1\\Driver1-0.pt"
+            ]
+        }
+    }
+}
