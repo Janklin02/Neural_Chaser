@@ -1,0 +1,38 @@
+{
+    "Driver1": {
+        "checkpoints": [
+            {
+                "steps": 366713,
+                "file_path": "results\\FernandoAiLearnso6\\Driver1\\Driver1-366713.onnx",
+                "reward": 1.3937449008737486,
+                "creation_time": 1791378855.3392284,
+                "auxillary_file_paths": [
+                    "results\\FernandoAiLearnso6\\Driver1\\Driver1-366713.pt"
+                ]
+            },
+            {
+                "steps": 377002,
+                "file_path": "results\\FernandoAiLearnso6\\Driver1\\Driver1-377002.onnx",
+                "reward": null,
+                "creation_time": 1791378971.0442612,
+                "auxillary_file_paths": [
+                    "results\\FernandoAiLearnso6\\Driver1\\Driver1-377002.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 377002,
+            "file_path": "results\\FernandoAiLearnso6\\Driver1.onnx",
+            "reward": null,
+            "creation_time": 1791378971.0442612,
+            "auxillary_file_paths": [
+                "results\\FernandoAiLearnso6\\Driver1\\Driver1-377002.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.2.0.dev0",
+        "torch_version": "2.1.1+cpu"
+    }
+}

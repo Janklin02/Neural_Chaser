@@ -41,7 +41,7 @@ public class FernandoAiLearnso : Agent
     private int _currentEpisode = 0;
     private float _cumulativeReward = 0f;
 
-    private void Update()
+    private void FixedUpdate()
     {
         go();
     }
@@ -219,11 +219,11 @@ public class FernandoAiLearnso : Agent
 
         if (_throttle >= ThrottleRewardThreshHold)
         {
-            AddReward(1.5f / maxStep);
+            //AddReward(1f / maxStep);
         }
         if (_throttle <= ThrottlePunishmentThreshHold)
         {
-            AddReward(-3f / maxStep);
+            //AddReward(-1f / maxStep);
         }
     }
 
@@ -235,6 +235,11 @@ public class FernandoAiLearnso : Agent
             Debug.Log("LineCrossed!");
 
         }
+        if (collision.gameObject.CompareTag("Checkpoint"))
+        {
+            Checkpoints++;
+            AddReward(2.0f * Checkpoints);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -244,18 +249,9 @@ public class FernandoAiLearnso : Agent
             Fail();
         }
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.CompareTag("Checkpoint"))
-        {
-            Checkpoints++;
-            AddReward(2.0f);
-        }
-    }
-
     private void FinishedLap()
     {
-        AddReward(10.0f);
+        AddReward(5.0f);
         Debug.Log(_cumulativeReward);
         _cumulativeReward = GetCumulativeReward();
         _Laps++;
@@ -267,10 +263,11 @@ public class FernandoAiLearnso : Agent
 
     private void Fail()
     {
-        AddReward(-5.0f);
+        //AddReward(-2.0f);
         _cumulativeReward = GetCumulativeReward();
 
         EndEpisode();
+        Checkpoints = 0;
     }
 }
 

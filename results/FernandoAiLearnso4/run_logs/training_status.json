@@ -2,31 +2,22 @@
     "Driver1": {
         "checkpoints": [
             {
-                "steps": 499941,
-                "file_path": "results\\FernandoAiLearnso4\\Driver1\\Driver1-499941.onnx",
-                "reward": -2.1799998432397842,
-                "creation_time": 1791051723.6970294,
+                "steps": 59941,
+                "file_path": "results\\FernandoAiLearnso4\\Driver1\\Driver1-59941.onnx",
+                "reward": -2.2158825239166617,
+                "creation_time": 1791376728.069649,
                 "auxillary_file_paths": [
-                    "results\\FernandoAiLearnso4\\Driver1\\Driver1-499941.pt"
-                ]
-            },
-            {
-                "steps": 509069,
-                "file_path": "results\\FernandoAiLearnso4\\Driver1\\Driver1-509069.onnx",
-                "reward": -2.179899844030539,
-                "creation_time": 1791083477.2898312,
-                "auxillary_file_paths": [
-                    "results\\FernandoAiLearnso4\\Driver1\\Driver1-509069.pt"
+                    "results\\FernandoAiLearnso4\\Driver1\\Driver1-59941.pt"
                 ]
             }
         ],
         "final_checkpoint": {
-            "steps": 509069,
+            "steps": 59941,
             "file_path": "results\\FernandoAiLearnso4\\Driver1.onnx",
-            "reward": -2.179899844030539,
-            "creation_time": 1791083477.2898312,
+            "reward": -2.2158825239166617,
+            "creation_time": 1791376728.069649,
             "auxillary_file_paths": [
-                "results\\FernandoAiLearnso4\\Driver1\\Driver1-509069.pt"
+                "results\\FernandoAiLearnso4\\Driver1\\Driver1-59941.pt"
             ]
         }
     },
